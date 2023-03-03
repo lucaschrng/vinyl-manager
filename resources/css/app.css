@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background-color: #E2E2E2;
+    font-family: "neue-haas-grotesk-display", sans-serif;
+}
+
+@layer components {
+    .auth-form input {
+        @apply p-3 font-medium bg-white/50 border border-black/5 rounded;
+    }
+
+    .auth-form p {
+        @apply ml-2 text-sm text-red-500;
+    }
+
+    .auth-form button {
+        @apply mt-6 mb-4 py-3 bg-zinc-800/90 text-white font-semibold rounded;
+    }
+}
