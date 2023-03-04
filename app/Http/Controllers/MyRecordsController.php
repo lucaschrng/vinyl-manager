@@ -11,6 +11,8 @@ class MyRecordsController extends Controller
         if (!auth()->check()) {
             return redirect()->route('home');
         }
-        return inertia('MyRecords');
+        return inertia('MyRecords', [
+            'records' => auth()->user()->records,
+        ]);
     }
 }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('title');
             $table->year('year');
             $table->text('description');
+            $table->string('cover_url');
             $table->json('tracks');
             $table->integer('number_of_lps');
             $table->json('color');

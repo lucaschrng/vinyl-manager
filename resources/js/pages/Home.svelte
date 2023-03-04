@@ -1,5 +1,4 @@
 <script>
-    import {router} from "@inertiajs/svelte";
     import {isLogin} from "@/store.js";
     import LoginForm from "@/components/Auth/LoginForm.svelte";
     import RegisterForm from "@/components/Auth/RegisterForm.svelte";

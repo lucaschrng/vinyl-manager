@@ -7,6 +7,12 @@ body {
     font-family: "neue-haas-grotesk-display", sans-serif;
 }
 
+@layer base {
+    body {
+        @apply text-neutral-900;
+    }
+}
+
 @layer components {
     .auth-form input {
         @apply p-3 font-medium bg-white/50 border border-black/5 rounded;
