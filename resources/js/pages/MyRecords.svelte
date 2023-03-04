@@ -1,10 +1,14 @@
 <script>
     import {router} from '@inertiajs/svelte';
     import {fade} from 'svelte/transition';
+    import {onMount} from "svelte";
 
     export let records = [];
 
-    let selectedRecord = null;
+    let selectedRecord = records[0];
+    let selectedRecordCover;
+    let bgPosX = 0;
+    let bgPosY = 0;
 
     const handleLogout = async () => {
         try {
@@ -14,6 +18,13 @@
             console.log(e);
         }
     }
+
+    window.addEventListener('mousemove', (e) => {
+        if (selectedRecord) {
+            bgPosX = e.clientX - selectedRecordCover.getBoundingClientRect().left - selectedRecordCover.getBoundingClientRect().width / 2;
+            bgPosY = e.clientY - selectedRecordCover.getBoundingClientRect().top - selectedRecordCover.getBoundingClientRect().height / 2;
+        }
+    });
 </script>
 
 <div class="w-fit m-auto mt-32">
@@ -54,8 +65,14 @@
                 </button>
 
                 <div class="relative">
-                    <img src="{selectedRecord.cover_url}" alt="album cover" height="240" width="240"
-                         class="drop-shadow-xl">
+                    <div class="relative w-fit overflow-hidden">
+                        <img bind:this={selectedRecordCover} src="{selectedRecord.cover_url}" alt="album cover"
+                             height="240" width="240"
+                             class="drop-shadow-xl">
+                        <div
+                            class="absolute w-[240px] h-[240px] top-0 left-0 bg-[radial-gradient(rgba(255,255,255,0.5),transparent)] bg-no-repeat blur-3xl"
+                            style="background-position: {bgPosX}px {bgPosY}px"></div>
+                    </div>
                     <div class="absolute top-0 left-28 grid grid-flow-col scale-[0.99] -z-10"
                          style="grid-template-columns: repeat(auto-fill, 54px);">
                         {#each Array(selectedRecord.number_of_lps) as _, i}
@@ -85,7 +102,8 @@
                 </ol>
             </div>
         {:else}
-            <div class="w-fit grid grid-cols-5 gap-6 {selectedRecord && 'opacity-0'}" in:fade={{delay: 100, duration: 200}} out:fade={{duration: 200}}>
+            <div class="w-fit grid grid-cols-5 gap-6 {selectedRecord && 'opacity-0'}"
+                 in:fade={{delay: 100, duration: 200}} out:fade={{duration: 200}}>
                 {#each [...records, ...records] as record}
                     <a on:click={() => selectedRecord = record} class="cursor-pointer">
                         <img src="{record.cover_url}" alt="album cover" height="160" width="160" class="shadow-xl mb-2">
