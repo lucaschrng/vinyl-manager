@@ -1,14 +1,24 @@
 <script>
     import {router} from '@inertiajs/svelte';
-    import {fade} from 'svelte/transition';
     import {onMount} from "svelte";
+    import {fade} from 'svelte/transition';
+    import {tweened} from 'svelte/motion';
+    import {cubicOut} from "svelte/easing";
 
     export let records = [];
 
     let selectedRecord = records[0];
     let selectedRecordCover;
+
     let bgPosX = 0;
     let bgPosY = 0;
+
+    let cellSize = tweened(0, {
+        duration: 500,
+        easing: cubicOut
+    });
+
+    $: cellSize.set(selectedRecord ? 40 : 0);
 
     const handleLogout = async () => {
         try {
@@ -20,7 +30,7 @@
     }
 
     window.addEventListener('mousemove', (e) => {
-        if (selectedRecord) {
+        if (selectedRecordCover) {
             bgPosX = e.clientX - selectedRecordCover.getBoundingClientRect().left - selectedRecordCover.getBoundingClientRect().width / 2;
             bgPosY = e.clientY - selectedRecordCover.getBoundingClientRect().top - selectedRecordCover.getBoundingClientRect().height / 2;
         }
@@ -71,13 +81,15 @@
                              class="drop-shadow-xl">
                         <div
                             class="absolute w-[240px] h-[240px] top-0 left-0 bg-[radial-gradient(rgba(255,255,255,0.5),transparent)] bg-no-repeat blur-3xl"
-                            style="background-position: {bgPosX}px {bgPosY}px"></div>
+                            style="background-position: {bgPosX}px {bgPosY}px"
+                            on:mouseenter={() => cellSize.set(130)}
+                            on:mouseleave={() => cellSize.set(40)}></div>
                     </div>
-                    <div class="absolute top-0 left-28 grid grid-flow-col scale-[0.99] -z-10"
-                         style="grid-template-columns: repeat(auto-fill, 54px);">
+                    <div class="absolute top-0 grid grid-flow-col scale-[0.99] -z-10 animate-slideIn"
+                         style="grid-template-columns: repeat(auto-fill, {$cellSize}px); left: {7-(40-$cellSize)/50}rem">
                         {#each Array(selectedRecord.number_of_lps) as _, i}
                             <div
-                                class="h-[240px] w-[240px] flex justify-center items-center bg-neutral-900 border-2 border-white/5 rounded-full -rotate-90 {i < selectedRecord.number_of_lps - 1 ? 'drop-shadow-lg':''}"
+                                class="record h-[240px] w-[240px] flex justify-center items-center bg-neutral-900 border-2 border-white/5 rounded-full -rotate-90 {i < selectedRecord.number_of_lps - 1 ? 'drop-shadow-lg':''}"
                                 style="z-index: {-i};">
                                 <div class="h-20 w-20 bg-neutral-700 rounded-full"></div>
                             </div>

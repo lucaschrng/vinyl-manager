@@ -26,3 +26,7 @@ body {
         @apply mt-6 mb-4 py-3 bg-zinc-800/90 text-white font-semibold rounded;
     }
 }
+
+.record {
+    mask-image: radial-gradient(circle at center, transparent 0, transparent 2.3%, black 2.7%);
+}
