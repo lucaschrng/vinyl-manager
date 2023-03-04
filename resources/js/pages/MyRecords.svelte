@@ -107,7 +107,7 @@
                 <h2 class="relative mt-9 mb-4 text-xl font-semibold pb-1.5 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-full after:h-px after:bg-black">
                     Tracks</h2>
                 <ol class="w-fit gap-x-20 font-medium grid grid-flow-col"
-                    style="grid-template-rows: repeat({Math.floor(JSON.parse(selectedRecord.tracks).length/2)}, minmax(0, 1fr));">
+                    style="grid-template-rows: repeat({Math.ceil(JSON.parse(selectedRecord.tracks).length/2)}, minmax(0, 1fr));">
                     {#each JSON.parse(selectedRecord.tracks) as track, index}
                         <li><span class="font-semibold">{index + 1}.</span> {track}</li>
                     {/each}
@@ -117,8 +117,8 @@
             <div class="w-fit grid grid-cols-5 gap-6 {selectedRecord && 'opacity-0'}"
                  in:fade={{delay: 100, duration: 200}} out:fade={{duration: 200}}>
                 {#each [...records, ...records] as record}
-                    <a on:click={() => selectedRecord = record} class="cursor-pointer">
-                        <img src="{record.cover_url}" alt="album cover" height="160" width="160" class="shadow-xl mb-2">
+                    <a on:click={() => selectedRecord = record} class="cursor-pointer group">
+                        <img src="{record.cover_url}" alt="album cover" height="160" width="160" class="shadow-xl mb-2 group-hover:scale-[1.01] transition">
                         <h2 class="font-semibold truncate max-w-[160px]">{record.title}</h2>
                         <p class="text-left font-medium leading-4 opacity-90">{record.artist}</p>
                     </a>
