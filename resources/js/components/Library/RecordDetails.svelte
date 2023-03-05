@@ -4,9 +4,11 @@
     import {cubicOut} from "svelte/easing";
     import {selectedRecord} from "@/store.js";
     import {createEventDispatcher, onMount} from "svelte";
+    import Picker from "vanilla-picker";
 
     export let record;
     if  (record.tracks.constructor.name === 'String') record.tracks = JSON.parse(record.tracks);
+    if  (record.color.constructor.name === 'String') record.color = JSON.parse(record.color);
     let {id, created_at, updated_at, ...updatedRecord} = {...record};
 
     const dispatch = createEventDispatcher();
@@ -37,6 +39,40 @@
         }
     });
 
+    let colorPicker;
+
+    onMount(() => {
+        colorPicker = new Picker({
+            parent: colorPicker,
+            popup: false,
+            template: `
+                <div class="picker_wrapper layout_default no_cancel rounded-lg border border-black/10" tabindex="-1" style="box-shadow: none;">
+                    <div class="picker_sl rounded" style="box-shadow: 0 0 3px 0px rgba(0, 0, 0, 0.05);">
+                        <div class="picker_selector" style="border: 2px solid white; box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.1); padding: 0.4rem"></div>
+                    </div>
+                    <div class="picker_arrow"></div>
+                    <div class="picker_hue picker_slider rounded border border-black/10" style="box-shadow: none;">
+                        <div class="picker_selector" style="border: 2px solid white; box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.1); padding: 0.4rem; border-radius: 1000px;"></div>
+                    </div>
+                    <div class="picker_alpha picker_slider" style="background: linear-gradient(rgb(255, 69, 0), rgba(255, 69, 0, 0)), linear-gradient(45deg, lightgrey 25%, transparent 25%, transparent 75%, lightgrey 75%) 0px 0px / 2em 2em, linear-gradient(45deg, lightgrey 25%, white 25%, white 75%, lightgrey 75%) 1em 1em / 2em 2em; width: 100%;">
+                        <div class="picker_selector" style=""></div>
+                    </div>
+                    <div class="picker_editor" style="width: 100%; box-shadow: none;">
+                        <input class="uppercase rounded" aria-label="Type a color name or hex value" style="font-family: neue-haas-grotesk-display, sans-serif; padding: 0.5rem; box-shadow: none; border: 1px solid rgba(0, 0, 0, 0.1)">
+                    </div>
+                    <div class="picker_sample" style="display: none;"></div>
+                    <div class="picker_done" style="display: none;"><button>Ok</button></div>
+                    <div class="picker_cancel"><button>Cancel</button></div>
+                </div>`,
+            alpha: false,
+            editor: true,
+            color: record.color.color,
+            onChange: (color) => {
+                updatedRecord.color.color = color.rgbString;
+            },
+        });
+    })
+
     const handleCancel = () => {
         editMode = false;
         updatedRecord = {...record};
@@ -66,7 +102,7 @@
 <div class="absolute top-0 w-full" in:fade={{delay: 100, duration: 200}} out:fade={{duration: 200}}>
     <div class="my-6 flex gap-2">
         <button on:click={() => selectedRecord.set(null)}
-                class="p-2 flex items-center gap-2 text-lg font-medium hover:bg-black/5 rounded transition">
+                class="p-2 flex items-center gap-2 text-lg font-medium hover:bg-black/5 border border-transparent hover:border-black/5 rounded transition">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                  stroke="currentColor" class="w-5 h-5">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -77,7 +113,7 @@
 
         {#if editMode}
             <button on:click={handleCancel}
-                    class="p-2 flex items-center gap-2 text-lg font-medium hover:bg-black/5 rounded transition"
+                    class="p-2 flex items-center gap-2 text-lg font-medium hover:bg-red-500/20 border border-transparent hover:border-black/5 rounded transition"
                     in:fade={{duration: 50, delay: 50}} out:fade={{duration: 50}}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                      stroke="currentColor" class="w-6 h-6">
@@ -86,7 +122,7 @@
                 Cancel
             </button>
             <button on:click={updateRecord}
-                    class="p-2 flex items-center gap-2 text-lg font-medium underline hover:bg-black/5 rounded transition"
+                    class="p-2 flex items-center gap-2 text-lg font-medium underline hover:bg-green-500/20 border border-transparent hover:border-black/5 rounded transition"
                     in:fade={{duration: 50, delay: 50}} out:fade={{duration: 50}}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                      stroke="currentColor" class="w-6 h-6">
@@ -96,7 +132,7 @@
             </button>
         {:else}
             <button on:click={() => editMode = true}
-                    class="p-2 flex items-center gap-2 text-lg font-medium hover:bg-black/5 rounded transition"
+                    class="p-2 flex items-center gap-2 text-lg font-medium hover:bg-black/5 border border-transparent hover:border-black/5 rounded transition"
                     in:fade={{duration: 50, delay: 50}} out:fade={{duration: 50}}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                      stroke="currentColor" class="w-5 h-5">
@@ -123,11 +159,16 @@
             {#each Array(record.number_of_lps) as _, i (i)}
                 <div
                     class="record h-[240px] w-[240px] flex justify-center items-center bg-neutral-900 border-2 border-white/5 rounded-full -rotate-90 {i < record.number_of_lps - 1 ? 'shadow-lg':''}"
-                    style="z-index: {-i};">
+                    style="z-index: {-i}; background-color: {updatedRecord.color.color}">
                     <div class="h-20 w-20 bg-neutral-700 rounded-full"></div>
                 </div>
             {/each}
         </div>
+    </div>
+
+    <div class="mt-6 {!editMode && 'hidden'}">
+        <h2 class="text-2xl font-semibold mb-2">Record aspect</h2>
+        <div bind:this={colorPicker}></div>
     </div>
 
     <div class="flex mt-6 items-center gap-3">
@@ -191,16 +232,16 @@
     <ol class="w-fit gap-x-20 font-medium grid grid-flow-col"
         style="grid-template-rows: repeat({Math.ceil(record.tracks.length/2)}, minmax(0, 1fr));">
         {#each record.tracks as track, index}
-            <li class="flex items-center">
+            <li class="flex items-center gap-2">
                 <span class="font-semibold">{index + 1}.</span>
-                <span contenteditable="false" on:click={handleClick}
+                <span class="outline-none" contenteditable="false" on:click={handleClick}
                       on:blur={handleBlur}
                       bind:innerHTML={updatedRecord.tracks[index]}>
                 </span>
                 {#if editMode}
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                          stroke="currentColor"
-                         class="w-4 h-4 ml-2 opacity-50" transition:fade={{duration: 50}}>
+                         class="w-4 h-4 opacity-50" transition:fade={{duration: 50}}>
                         <path stroke-linecap="round" stroke-linejoin="round"
                               d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"/>
                     </svg>

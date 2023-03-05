@@ -1,5 +1,4 @@
 <script>
-    import {router} from '@inertiajs/svelte';
     import {selectedRecord} from "@/store.js";
     import Header from "@/components/Layout/Header.svelte";
     import RecordDetails from "@/components/Library/RecordDetails.svelte";

@@ -5,6 +5,12 @@
 body {
     background-color: #E2E2E2;
     font-family: "neue-haas-grotesk-display", sans-serif;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+    display: none;
 }
 
 @layer base {

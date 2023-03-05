@@ -12,7 +12,7 @@
 </script>
 
 <header
-    class="relative mb-8 pb-4 flex justify-between items-center after:content-[''] after:absolute after:bottom-0 after:w-full after:h-[1.5px] after:bg-black">
+    class="relative pb-4 flex justify-between items-center after:content-[''] after:absolute after:bottom-0 after:w-full after:h-[1.5px] after:bg-black">
     <h1 class="text-2xl font-semibold">My Records</h1>
     <ul class="flex gap-4">
         <li class="flex items-center">
@@ -25,7 +25,7 @@
             </button>
         </li>
         <li class="flex items-center">
-            <button on:click={handleLogout}>
+            <button on:click={handleLogout} title="Logout">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                      stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round"
