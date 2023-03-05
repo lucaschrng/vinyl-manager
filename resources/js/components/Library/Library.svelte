@@ -17,7 +17,7 @@
            style="animation-delay: {i*20}ms" on:animationend={handleAnimationEnd}>
             <Record src="{record.cover_url}"/>
             <h2 class="font-semibold truncate max-w-[160px]">{record.title}</h2>
-            <p class="text-left font-medium leading-4 opacity-90">{record.artist}</p>
+            <p class="text-left font-medium leading-4 opacity-90 truncate max-w-[160px]">{record.artist}</p>
         </a>
     {/each}
 </div>

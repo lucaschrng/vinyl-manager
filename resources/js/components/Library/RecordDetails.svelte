@@ -6,7 +6,8 @@
     import {createEventDispatcher, onMount} from "svelte";
 
     export let record;
-    let { id,  created_at, updated_at, ...updatedRecord } = {...record};
+    if  (record.tracks.constructor.name === 'String') record.tracks = JSON.parse(record.tracks);
+    let {id, created_at, updated_at, ...updatedRecord} = {...record};
 
     const dispatch = createEventDispatcher();
 
@@ -36,7 +37,12 @@
         }
     });
 
-    const handleFocus = (e) => {
+    const handleCancel = () => {
+        editMode = false;
+        updatedRecord = {...record};
+    }
+
+    const handleClick = (e) => {
         e.target.contentEditable = editMode;
         e.target.focus();
     }
@@ -70,23 +76,28 @@
         </button>
 
         {#if editMode}
-            <button on:click={() => editMode = false}
-                    class="p-2 flex items-center gap-2 text-lg font-medium hover:bg-black/5 rounded transition" in:fade={{duration: 50, delay: 50}} out:fade={{duration: 50}}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <button on:click={handleCancel}
+                    class="p-2 flex items-center gap-2 text-lg font-medium hover:bg-black/5 rounded transition"
+                    in:fade={{duration: 50, delay: 50}} out:fade={{duration: 50}}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
                 Cancel
             </button>
             <button on:click={updateRecord}
-                    class="p-2 flex items-center gap-2 text-lg font-medium underline hover:bg-black/5 rounded transition" in:fade={{duration: 50, delay: 50}} out:fade={{duration: 50}}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                    class="p-2 flex items-center gap-2 text-lg font-medium underline hover:bg-black/5 rounded transition"
+                    in:fade={{duration: 50, delay: 50}} out:fade={{duration: 50}}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
                 </svg>
                 Save changes
             </button>
         {:else}
             <button on:click={() => editMode = true}
-                    class="p-2 flex items-center gap-2 text-lg font-medium hover:bg-black/5 rounded transition" in:fade={{duration: 50, delay: 50}} out:fade={{duration: 50}}>
+                    class="p-2 flex items-center gap-2 text-lg font-medium hover:bg-black/5 rounded transition"
+                    in:fade={{duration: 50, delay: 50}} out:fade={{duration: 50}}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                      stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -120,9 +131,10 @@
     </div>
 
     <div class="flex mt-6 items-center gap-3">
-        <h2 class="w-fit text-2xl font-semibold outline-none" contenteditable="false" on:click={handleFocus}
+        <h2 class="w-fit text-2xl font-semibold outline-none {editMode ? 'select-all' : 'select-text'}"
+            contenteditable="false" on:click={handleClick}
             on:blur={handleBlur}
-            bind:innerHTML={updatedRecord.title}>{record.title}</h2>
+            bind:innerHTML={updatedRecord.title}></h2>
         {#if editMode}
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                  stroke="currentColor"
@@ -133,9 +145,10 @@
         {/if}
     </div>
     <div class="flex items-center gap-3">
-        <p class="w-fit text-2xl font-medium leading-6 outline-none" contenteditable="false" on:click={handleFocus}
+        <p class="w-fit text-2xl font-medium leading-6 outline-none {editMode ? 'select-all' : 'select-text'}"
+           contenteditable="false" on:click={handleClick}
            on:blur={handleBlur}
-           bind:innerHTML={updatedRecord.artist}>{record.artist}</p>
+           bind:innerHTML={updatedRecord.artist}></p>
         {#if editMode}
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                  stroke="currentColor"
@@ -146,8 +159,9 @@
         {/if}
     </div>
     <div class="flex mt-2 items-center gap-3">
-        <p class="w-fit text-2xl font-medium opacity-70 outline-none" contenteditable="false" on:click={handleFocus}
-           on:blur={handleBlur} bind:innerHTML={updatedRecord.year}>{record.year}</p>
+        <p class="w-fit text-2xl font-medium opacity-70 outline-none {editMode ? 'select-all' : 'select-text'}"
+           contenteditable="false" on:click={handleClick}
+           on:blur={handleBlur} bind:innerHTML={updatedRecord.year}></p>
         {#if editMode}
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                  stroke="currentColor"
@@ -169,15 +183,29 @@
             </svg>
         {/if}
     </div>
-    <p class="mt-1.5 font-medium outline-none" contenteditable="false" on:click={handleFocus} on:blur={handleBlur}
-       bind:innerHTML={updatedRecord.description}>{record.description}</p>
+    <p class="mt-1.5 font-medium outline-none" contenteditable="false" on:click={handleClick} on:blur={handleBlur}
+       bind:innerHTML={updatedRecord.description}></p>
 
     <h2 class="relative mt-9 mb-4 text-xl font-semibold pb-1.5 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-full after:h-px after:bg-black">
         Tracks</h2>
     <ol class="w-fit gap-x-20 font-medium grid grid-flow-col"
-        style="grid-template-rows: repeat({Math.ceil(JSON.parse(record.tracks).length/2)}, minmax(0, 1fr));">
-        {#each JSON.parse(record.tracks) as track, index}
-            <li><span class="font-semibold">{index + 1}.</span> {track}</li>
+        style="grid-template-rows: repeat({Math.ceil(record.tracks.length/2)}, minmax(0, 1fr));">
+        {#each record.tracks as track, index}
+            <li class="flex items-center">
+                <span class="font-semibold">{index + 1}.</span>
+                <span contenteditable="false" on:click={handleClick}
+                      on:blur={handleBlur}
+                      bind:innerHTML={updatedRecord.tracks[index]}>
+                </span>
+                {#if editMode}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor"
+                         class="w-4 h-4 ml-2 opacity-50" transition:fade={{duration: 50}}>
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"/>
+                    </svg>
+                {/if}
+            </li>
         {/each}
     </ol>
 </div>
