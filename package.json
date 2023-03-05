@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "@inertiajs/svelte": "^1.0.2",
+        "node-vibrant": "^3.2.1-alpha.1",
         "svelte": "^3.55.1"
     }
 }

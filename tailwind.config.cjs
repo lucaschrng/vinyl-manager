@@ -6,7 +6,17 @@ module.exports = {
         "./resources/**/*.svelte",
     ],
   theme: {
-    extend: {},
+    extend: {
+        keyframes: {
+            appear: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+            }
+        },
+        animation: {
+            appear: 'appear 0.2s ease-in-out',
+        }
+    },
   },
   plugins: [],
 }

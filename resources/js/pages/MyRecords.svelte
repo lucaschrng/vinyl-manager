@@ -1,13 +1,13 @@
 <script>
     import {router} from '@inertiajs/svelte';
-    import {onMount} from "svelte";
     import {fade} from 'svelte/transition';
     import {tweened} from 'svelte/motion';
     import {cubicOut} from "svelte/easing";
+    import LibraryRecord from "@/components/LibraryRecordCover.svelte";
 
     export let records = [];
 
-    let selectedRecord = records[0];
+    let selectedRecord = null;
     let selectedRecordCover;
 
     let bgPosX = 0;
@@ -27,6 +27,11 @@
         } catch (e) {
             console.log(e);
         }
+    }
+
+    const handleAnimationEnd = (e) => {
+        e.target.classList.remove('opacity-0');
+        e.target.classList.add('opacity-1');
     }
 
     window.addEventListener('mousemove', (e) => {
@@ -66,13 +71,28 @@
     <div class="relative min-w-[896px]">
         {#if selectedRecord}
             <div class="absolute top-0 w-full" in:fade={{delay: 100, duration: 200}} out:fade={{duration: 200}}>
-                <button on:click={() => selectedRecord = null} class="my-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                         stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"/>
-                    </svg>
-                </button>
+                <div class="my-6 flex gap-2">
+                    <button on:click={() => selectedRecord = null}
+                            class="p-2 flex items-center gap-2 text-lg font-medium hover:bg-black/5 rounded transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                             stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"/>
+                        </svg>
+                        Back to library
+                    </button>
+
+                    <button on:click={() => selectedRecord = null}
+                            class="p-2 flex items-center gap-2 text-lg font-medium hover:bg-black/5 rounded transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                             stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"/>
+                        </svg>
+                        Edit record
+                    </button>
+                    <button on:click={() => selectedRecord.number_of_lps++}>Increment</button>
+                </div>
 
                 <div class="relative">
                     <div class="relative w-fit overflow-hidden">
@@ -85,9 +105,9 @@
                             on:mouseenter={() => cellSize.set(130)}
                             on:mouseleave={() => cellSize.set(40)}></div>
                     </div>
-                    <div class="absolute top-0 grid grid-flow-col scale-[0.99] -z-10 animate-slideIn"
-                         style="grid-template-columns: repeat(auto-fill, {$cellSize}px); left: {7-(40-$cellSize)/50}rem">
-                        {#each Array(selectedRecord.number_of_lps) as _, i}
+                    <div class="absolute top-0 grid scale-[0.99] -z-10 animate-slideIn"
+                         style="grid-template-columns: repeat({selectedRecord.number_of_lps}, {$cellSize}px); left: {7-(40-$cellSize)/50}rem">
+                        {#each Array(selectedRecord.number_of_lps) as _, i (i)}
                             <div
                                 class="record h-[240px] w-[240px] flex justify-center items-center bg-neutral-900 border-2 border-white/5 rounded-full -rotate-90 {i < selectedRecord.number_of_lps - 1 ? 'drop-shadow-lg':''}"
                                 style="z-index: {-i};">
@@ -114,11 +134,12 @@
                 </ol>
             </div>
         {:else}
-            <div class="w-fit grid grid-cols-5 gap-6 {selectedRecord && 'opacity-0'}"
+            <div class="w-fit grid grid-cols-5 gap-x-6 gap-y-12 {selectedRecord && 'opacity-0'}"
                  in:fade={{delay: 100, duration: 200}} out:fade={{duration: 200}}>
-                {#each [...records, ...records] as record}
-                    <a on:click={() => selectedRecord = record} class="cursor-pointer group">
-                        <img src="{record.cover_url}" alt="album cover" height="160" width="160" class="shadow-xl mb-2 group-hover:scale-[1.01] transition">
+                {#each records as record, i}
+                    <a on:click={() => selectedRecord = record} class="cursor-pointer group opacity-0 animate-appear"
+                       style="animation-delay: {i*20}ms" on:animationend={handleAnimationEnd}>
+                        <LibraryRecord src="{record.cover_url}"/>
                         <h2 class="font-semibold truncate max-w-[160px]">{record.title}</h2>
                         <p class="text-left font-medium leading-4 opacity-90">{record.artist}</p>
                     </a>
