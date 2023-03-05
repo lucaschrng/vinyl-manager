@@ -10,6 +10,18 @@ class Record extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'artist',
+        'title',
+        'year',
+        'description',
+        'cover_url',
+        'tracks',
+        'number_of_lps',
+        'color',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

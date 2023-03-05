@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Record;
-use App\Http\Requests\StoreRecordRequest;
 use App\Http\Requests\UpdateRecordRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RecordController extends Controller
 {
@@ -13,39 +14,20 @@ class RecordController extends Controller
      */
     public function index()
     {
-        //
+        $user = Auth::user();
+        $records = $user->records;
+
+        return response()->json($records);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function store(Request $request)
     {
-        //
-    }
+        $record = Record::create($request->all());
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreRecordRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Record $record)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Record $record)
-    {
-        //
+        return response()->json($record, 201);
     }
 
     /**
@@ -53,7 +35,9 @@ class RecordController extends Controller
      */
     public function update(UpdateRecordRequest $request, Record $record)
     {
-        //
+        $record->update($request->all());
+
+        return response()->json($record);
     }
 
     /**
@@ -61,6 +45,8 @@ class RecordController extends Controller
      */
     public function destroy(Record $record)
     {
-        //
+        $record->delete();
+
+        return response()->json(null, 204);
     }
 }
