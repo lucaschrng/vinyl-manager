@@ -6,6 +6,8 @@
     import {selectedRecord} from "../../store.js";
     import {createEventDispatcher, onMount} from "svelte";
     import Picker from "vanilla-picker";
+    import noUiSlider from 'nouislider';
+    import 'nouislider/dist/nouislider.css';
 
     export let record;
     if  (record.tracks.constructor.name === 'String') record.tracks = JSON.parse(record.tracks);
@@ -41,13 +43,14 @@
     });
 
     let colorPicker;
+    let slider;
 
     onMount(() => {
         colorPicker = new Picker({
             parent: colorPicker,
             popup: false,
             template: `
-                <div class="picker_wrapper layout_default no_cancel rounded-lg border border-black/10" tabindex="-1" style="box-shadow: none;">
+                <div class="picker_wrapper layout_default no_cancel" tabindex="-1" style="box-shadow: none; background: transparent; padding: 0;">
                     <div class="picker_sl rounded" style="box-shadow: 0 0 3px 0px rgba(0, 0, 0, 0.05);">
                         <div class="picker_selector" style="border: 2px solid white; box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.1); padding: 0.4rem"></div>
                     </div>
@@ -71,6 +74,18 @@
             onChange: (color) => {
                 updatedRecord.color.color = color.rgbString;
             },
+        });
+
+        noUiSlider.create(slider, {
+            start: [record.color.opacity],
+            range: {
+                'min': [0],
+                'max': [1]
+            }
+        });
+
+        slider.noUiSlider.on('update', () => {
+            updatedRecord.color.opacity = slider.noUiSlider.get();
         });
     })
 
@@ -158,12 +173,15 @@
              style="grid-template-columns: repeat({record.number_of_lps}, {$cellSize}px); left: {7-(40-$cellSize)/50}rem">
             {#each Array(record.number_of_lps) as _, i (i)}
                 <div class="relative h-[240px] w-[240px]">
+                    <div class="absolute h-full w-full rounded-full -rotate-90 {i < record.number_of_lps - 1 ? 'shadow-xl':''}" style="z-index: {-i}"></div>
+                    <div class="absolute h-full w-full bg-[url('/record_texture.webp')] bg-center bg-cover rounded-full -rotate-90" style="z-index: {-i}; opacity: {updatedRecord.color.opacity}"></div>
                     <div
-                            class="absolute record h-full w-full flex justify-center items-center bg-neutral-900 border-2 border-white/5 rounded-full mix-blend-screen"
-                            style="z-index: {-i*2}; background-color: {updatedRecord.color.color}">
+                            class="absolute record h-full w-full flex justify-center items-center rounded-full mix-blend-screen"
+                            style="z-index: {-i}; background-color: {updatedRecord.color.color}; opacity: {updatedRecord.color.opacity}">
+                    </div>
+                    <div class="absolute record h-full w-full flex justify-center items-center" style="z-index: {-i};">
                         <div class="h-20 w-20 bg-neutral-700 rounded-full"></div>
                     </div>
-                    <div class="absolute h-full w-full bg-[url('/record_texture.webp')] bg-center bg-cover rounded-full -rotate-90 {i < record.number_of_lps - 1 ? 'shadow-xl':''}" style="z-index: {-i*2-1}"></div>
                 </div>
             {/each}
         </div>
@@ -171,7 +189,24 @@
 
     <div class="mt-6 {!editMode && 'hidden'}">
         <h2 class="text-2xl font-semibold mb-2">Record aspect</h2>
-        <div bind:this={colorPicker}></div>
+        <div class="flex rounded-lg bg-neutral-200 border border-black/10 shadow-sm p-1">
+            <div bind:this={colorPicker}></div>
+            <div class="p-1 w-full flex flex-col">
+                <div class="h-fit w-full flex gap-2">
+                    <button class="w-full p-2 text-black/60 bg-neutral-300 border border-black/10 text-lg font-semibold rounded">
+                        Primary Color
+                    </button>
+                    <button class="w-full p-2 text-black/60 bg-neutral-300 border border-black/10 text-lg font-semibold rounded">
+                        Secondary Color
+                    </button>
+                    <button class="w-full p-2 text-black/60 bg-neutral-300 border border-black/10 text-lg font-semibold rounded">
+                        Label Color
+                    </button>
+                </div>
+                <h3 class="mt-6 font-medium">Opacity</h3>
+                <div bind:this={slider} id="slider"></div>
+            </div>
+        </div>
     </div>
 
     <div class="flex mt-6 items-center gap-3">

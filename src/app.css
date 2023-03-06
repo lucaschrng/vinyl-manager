@@ -36,3 +36,28 @@ body::-webkit-scrollbar {
 .record {
   mask-image: radial-gradient(circle at center, transparent 0, transparent 2.3%, black 2.7%);
 }
+
+#slider {
+  height: 10px;
+  margin: 0 1rem;
+}
+
+#slider .noUi-connect {
+  background: #c0392b;
+}
+
+#slider .noUi-handle {
+  height: 18px;
+  width: 18px;
+  top: -5px;
+  right: -9px; /* half the width */
+  border-radius: 9px;
+}
+
+#slider .noUi-handle:after {
+  display: none;
+}
+
+#slider .noUi-handle:before {
+  display: none;
+}

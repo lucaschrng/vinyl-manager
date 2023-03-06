@@ -2,16 +2,10 @@
     import {fade} from "svelte/transition";
     import {selectedRecord} from "../../store.js";
     import Record from "../Library/LibraryRecordCover.svelte";
-    import {onMount} from "svelte";
-    import {getRecords} from "$lib/pocketbase.js";
 
-    let records = [];
-    onMount(async () => {
-        records = await getRecords();
-        renderRecords = true;
-    })
+    export let records = [];
 
-    let renderRecords = false;
+    let renderRecords = true;
     let currentSort = null;
     let currentOrder = null;
 

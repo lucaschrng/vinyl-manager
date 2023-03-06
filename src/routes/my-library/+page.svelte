@@ -3,13 +3,17 @@
   import Header from "../../components/Layout/Header.svelte";
   import RecordDetails from "../../components/Library/RecordDetails.svelte";
   import Library from "../../components/Library/Library.svelte";
+  import {onMount} from "svelte";
+  import {getRecords} from "$lib/pocketbase.js";
 
-  export let records = [];
+  let records;
+  onMount(async () => {
+    records = await getRecords();
+  })
 
   const updateRecords = async () => {
     try {
-      // fetch records
-      // records = response.data;
+      records = await getRecords();
     } catch (e) {
       console.error(e);
     }
