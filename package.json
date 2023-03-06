@@ -1,23 +1,30 @@
 {
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "dev": "vite",
-        "build": "vite build"
-    },
-    "devDependencies": {
-        "@sveltejs/vite-plugin-svelte": "^2.0.3",
-        "autoprefixer": "^10.4.13",
-        "axios": "^1.1.2",
-        "laravel-vite-plugin": "^0.7.2",
-        "postcss": "^8.4.21",
-        "tailwindcss": "^3.2.7",
-        "vite": "^4.0.0"
-    },
-    "dependencies": {
-        "@inertiajs/svelte": "^1.0.2",
-        "node-vibrant": "^3.2.1-alpha.1",
-        "svelte": "^3.55.1",
-        "vanilla-picker": "^2.12.1"
-    }
+	"name": "vinyl-manager",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/kit": "^1.5.0",
+		"autoprefixer": "^10.4.13",
+		"postcss": "^8.4.21",
+		"svelte": "^3.54.0",
+		"svelte-check": "^3.0.1",
+		"tailwindcss": "^3.2.7",
+		"typescript": "^4.9.3",
+		"vite": "^4.0.0"
+	},
+	"type": "module",
+	"dependencies": {
+		"cookie": "^0.5.0",
+		"node-vibrant": "^3.2.1-alpha.1",
+		"pocketbase": "^0.12.0",
+		"vanilla-picker": "^2.12.1"
+	}
 }
