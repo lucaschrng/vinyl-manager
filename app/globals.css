@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.masked {
+  mask-position: center;
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+}
+
+.hole-mask {
+  mask-image: radial-gradient(circle at center, transparent 0, transparent 2.3%, black 2.7%);
+}
+
+.hole-and-label-mask {
+  mask-image: radial-gradient(circle at center, transparent 0, transparent 2.3%, black 2.7%, black 24%, transparent 24.5%);
+}
+
+.label-mask {
+  mask-image: radial-gradient(circle at center, transparent 0, transparent 23.8%, black 24.1%, black 25%);
+}
+
+.split-mask-1 {
+  mask-image: url("/masks/split-mask-1.png");
+}
+
+.split-mask-2 {
+  mask-image: url("/masks/split-mask-2.png");
+}

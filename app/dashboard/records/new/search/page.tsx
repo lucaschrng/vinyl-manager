@@ -7,6 +7,7 @@ import { useDebounce } from 'use-debounce';
 import { clsx } from 'clsx';
 import Link from 'next/link';
 import Image from 'next/image';
+import RecordCard from '@/components/RecordCard';
 
 interface Album {
   id: string;
@@ -69,26 +70,13 @@ const NewRecordSearch = () => {
         style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}
       >
         {results?.map((album) => (
-          <Link
-            href={`/dashboard/records/new?albumId=${album.id}`}
+          <RecordCard
             key={album.id}
-            className="rounded border border-transparent p-2 transition duration-150 hover:border-stone-300 hover:bg-stone-200 hover:shadow-sm"
-          >
-            <Image
-              src={album.cover_image}
-              width={160}
-              height={160}
-              alt={`${album.title} album cover`}
-              className="aspect-square w-full object-cover shadow-lg"
-              blurDataURL="/album_cover_placeholder.jpg"
-              placeholder="blur"
-            />
-            <p className="mt-2 font-medium leading-5">
-              {album.title}
-              <br />
-              <span className="text-neutral-500">{`${album.country} • ${album.year}`}</span>
-            </p>
-          </Link>
+            href={`/dashboard/records/new?albumId=${album.id}`}
+            imageSrc={album.cover_image}
+            title={album.title}
+            subtitle={`${album.country} • ${album.year}`}
+          />
         ))}
       </div>
     </div>

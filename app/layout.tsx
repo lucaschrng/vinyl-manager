@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={clsx(inter.className, 'bg-stone-100 text-stone-900')}>
         <ProvidersWrapper>
-          <header className="sticky top-10">
+          <header className="sticky top-10 z-10">
             <Navbar />
           </header>
           {children}

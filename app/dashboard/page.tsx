@@ -2,6 +2,7 @@ import { cookies } from 'next/headers';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
 import { Database } from '@/types/supabase';
 import Image from 'next/image';
+import RecordCard from '@/components/RecordCard';
 
 const getAlbums = async () => {
   const supabase = createServerComponentClient<Database>({ cookies });
@@ -39,28 +40,19 @@ const Dashboard = async () => {
       <div className="mb-10 mt-2 h-0.5 w-full rounded-full bg-stone-300"></div>
 
       <div
-        className="grid gap-4"
-        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr)' }}
+        className="grid gap-1"
+        style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))' }}
       >
         {albums?.map((album) => (
-          <div key={album.id}>
-            <Image
-              src={album.cover_image ?? ''}
-              alt="album cover"
-              width={160}
-              height={160}
-              className="aspect-square w-full object-cover shadow-lg"
-              blurDataURL="/album_cover_placeholder.jpg"
-              placeholder="blur"
-            />
-            <p className="mt-2 font-medium leading-5">
-              {album.title}
-              <br />
-              <span className="text-neutral-500">{`${album.artists
-                .map((artist) => artist.name)
-                .join(', ')} • ${album.release_date_year}`}</span>
-            </p>
-          </div>
+          <RecordCard
+            key={album.id}
+            href={`dashboard/records/${album.id}`}
+            imageSrc={album.cover_image ?? ''}
+            title={album.title ?? ''}
+            subtitle={`${album.artists
+              .map((artist) => artist.name)
+              .join(', ')} • ${album.release_date_year}`}
+          />
         ))}
       </div>
     </div>

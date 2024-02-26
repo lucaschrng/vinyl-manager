@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Database } from '@/types/supabase';
 import { decode } from 'base64-arraybuffer';
 import { SupabaseClient } from '@supabase/supabase-js';
+import { VinylDisc } from '@/types/vinylDisc';
 
 interface Track {
   position: string;
@@ -22,6 +23,7 @@ export const POST = async (req: NextRequest) => {
     imageUrl,
     imageFile,
     status,
+    vinylDiscs,
   } = await req.json();
 
   try {
@@ -114,6 +116,8 @@ export const POST = async (req: NextRequest) => {
       throw tracksResponse.error;
     }
 
+    await handleVinylDiscs(vinylDiscs, albumID, supabase);
+
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error(error);
@@ -193,4 +197,65 @@ async function handleGenres(
   }
 
   return genreIds;
+}
+
+interface VinylDiscData {
+  color_1: string;
+  color_2?: string;
+  color_3?: string;
+  color_style: string;
+  label_color: string;
+  label_image_url?: string;
+  label_style: string;
+  order: number;
+  album_id: number;
+}
+
+async function handleVinylDiscs(
+  vinylDiscs: VinylDisc[],
+  albumID: number,
+  supabase: SupabaseClient<Database>,
+) {
+  const vinylDiscsData: VinylDiscData[] = [];
+
+  for (let disc of vinylDiscs) {
+    let labelImageUrl = disc.labelImageUrl;
+    if (disc.labelStyle === 'image' && disc.labelImageFile) {
+      const base64 = disc.labelImageFile.base64.split('base64,')[1];
+
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(`${uuidv4()}-${disc.labelImageFile.name}`, decode(base64), {
+          contentType: disc.labelImageFile.base64
+            .split(';base64,')[0]
+            .replace('data:', ''),
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      labelImageUrl = data?.path;
+    }
+
+    vinylDiscsData.push({
+      color_1: disc.color1,
+      color_2: disc.color2,
+      color_3: disc.color3,
+      color_style: disc.colorStyle,
+      label_color: disc.labelColor,
+      label_image_url: labelImageUrl,
+      label_style: disc.labelStyle,
+      order: disc.order,
+      album_id: albumID,
+    });
+  }
+
+  const vinylDiscsResponse = await supabase
+    .from('vinyl_discs')
+    .insert(vinylDiscsData);
+
+  if (vinylDiscsResponse.error) {
+    throw vinylDiscsResponse.error;
+  }
 }
