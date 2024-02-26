@@ -5,6 +5,8 @@ import ProvidersWrapper from '@/components/ProvidersWrapper';
 import Navbar from '@/components/Navbar';
 import { clsx } from 'clsx';
 
+export const revalidate = 0;
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
