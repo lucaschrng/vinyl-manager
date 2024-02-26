@@ -7,10 +7,11 @@ import {
 import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const Login = () => {
   const router = useRouter();
+  const pathname = usePathname();
 
   const supabaseClient = useSupabaseClient();
   const { session } = useSessionContext();
@@ -28,7 +29,7 @@ const Login = () => {
         <Auth
           supabaseClient={supabaseClient}
           providers={['github', 'google']}
-          redirectTo="http://localhost:3000/login"
+          redirectTo={`${window.location.origin}/login`}
           appearance={{
             theme: ThemeSupa,
             variables: {
